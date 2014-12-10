@@ -6,18 +6,17 @@ from court.models import Court
 from django.http import HttpResponse
 import json
 
-
 def __failed_auth(request):
     return not hasattr(settings, 'OAUTH_TOKEN') or (request.META.get('HTTP_AUTHORIZATION','') != 'Bearer ' + settings.OAUTH_TOKEN)
 
-def __serialize_court(court):
-    return {'name':court.name}
+def __to_obj(court):
+    return {'name':court.name, 'slug':court.slug, 'number':court.number, 'updated_at':court.updated_at, 'closed': court.closed, 'alert': court.alert, 'lat':court.lat, 'lon':court.lon, 'DX':court.dx}
 
 def list(request):
     if __failed_auth(request):
         return HttpResponseForbidden()
     courts = Court.objects.all()
-    court_objs = [__serialize_court(court) for court in courts]
+    court_objs = [__to_obj(court) for court in courts]
     return HttpResponse(json.dumps(court_objs))
 
 def court(request, uuid):
@@ -25,7 +24,7 @@ def court(request, uuid):
         return HttpResponseForbidden()
     if request.method == "GET":
         court = get_object_or_404(Court,uuid=uuid)
-        court_obj = __serialize_court(court)
+        court_obj = __to_obj(court)
         return HttpResponse(json.dumps(court_obj))
 
     elif request.method == "PUT":
@@ -42,7 +41,7 @@ def court(request, uuid):
             court.alert=c['alert']
             court.lat=c['lat']
             court.lon=c['lon']
-            court.number=c['court_number']
+            court.number=c['number']
             court.dx=c['DX']
             return HttpResponse(status=200)
         else:
@@ -56,7 +55,7 @@ def court(request, uuid):
               alert=c['alert'],
               lat=c['lat'],
               lon=c['lon'],
-              number=c['court_number'],
+              number=c['number'],
               dx=c['DX']
             )
             return HttpResponse(status=201)
