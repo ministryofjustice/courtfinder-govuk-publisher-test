@@ -1,0 +1,68 @@
+{
+    "name": "Accrington Magistrates' Court",
+    "slug": "accrington-magistrates-court",
+    "updated_at": "2014-03-18T12:33:12.176Z",
+    "update_type": "major",
+    "locale": "en",
+    "closed": false,
+    "alert": "There is an intermittent fault with our telephone number and it is sometimes unavailable.",
+    "lat": "53.7491281247251",
+    "lon": "-2.359323760375266",
+    "court_number": 1725,
+    "DX": "730458 Blackburn 10",
+    "areas_of_law": [
+        "Crime", "Adoption"
+    ],
+    "facilities": [
+        {"type": "guide_dogs", "description": "Guide Dogs are welcome at this court."},
+        {"type": "interview_room", "description": "Two interview rooms are available at this court."}
+    ],
+    "parking": [
+        {"type":"onsite", "description":"On site parking is not available at this venue."},
+        {"type":"offsite", "description": "Paid off site parking is available within 500m of this venue."},
+        {"type":"blue_badge", "description": "Blue badge parking is not available at this venue."}
+    ],
+    "opening_times": [
+        {"name":"Court building open", "description": "Monday to Friday 9:15am to close of business"}
+    ],
+    "addresses": [
+        {
+            "type": "visiting",
+            "town": "Accrington",
+            "county": "Lancashire",
+            "postcode": "BB5 2BH",
+            "lines": ["East Lancashire Magistrates' Court","The Law Courts","Manchester Road"]
+        },
+        {
+            "type": "postal",
+            "town": "Blackburn",
+            "county": "Lancashire",
+            "postcode": "BB2 1AA",
+            "lines": ["Accrington Magistrates' Court", "The Court House", "Northgate"]
+        }
+    ],
+    "contacts": [
+        {
+            "name": "Fax",
+            "number": "0870 739 4254"
+        },
+        {
+            "name": "Enquiries",
+            "number": "01254  687500"
+        },
+        {
+            "name": "Fine queries",
+            "number": "01282  610000"
+        },
+        {
+            "name": "Witness Service",
+            "number": "01254 265 305"
+        }
+    ],
+    "emails": [
+        {
+            "name": "Enquiries",
+            "address": "ln-blackburnmcenq@hmcts.gsi.gov.uk"
+        }
+    ]
+}
