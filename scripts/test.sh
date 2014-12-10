@@ -5,7 +5,8 @@ COURT_FILE=../data/sample_court.json
 OAUTH_TOKEN='foobar'
 
 list() {
-    curl -v -H "Authorization: Bearer $OAUTH_TOKEN"  -s "${BASE_URL}" 2>&1 | grep "HTTP/1.0"
+    curl -H "Authorization: Bearer $OAUTH_TOKEN"  -s "${BASE_URL}"
+    echo
 }
 get() {
     curl -v -H "Authorization: Bearer $OAUTH_TOKEN"  -s "${BASE_URL}$1" 2>&1 | grep "HTTP/1.0"
@@ -23,7 +24,8 @@ delete "eed8f7c0-7ff1-11e4-a98a-0002a5d5c51b"
 list
 
 put "eed8f7c0-7ff1-11e4-a98a-0002a5d5c51c"
+list
 put "eed8f7c0-7ff1-11e4-a98a-0002a5d5c51c"
 put "eed8f7c0-7ff1-11e4-a98a-0002a5d5c51c"
-delete "eed8f7c0-7ff1-11e4-a98a-0002a5d5c51b"
+delete "eed8f7c0-7ff1-11e4-a98a-0002a5d5c51c"
 list
