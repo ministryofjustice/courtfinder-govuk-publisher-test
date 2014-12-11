@@ -21,6 +21,7 @@ def same_arrays(a,b):
         return True
 
 def fail(message):
+    global num_errors
     num_errors = num_errors + 1
     print "FAIL: "+str(message)
 
@@ -67,16 +68,21 @@ def delete(uuid, auth=True):
 
 if __name__ == "__main__":
     check('delete all the things', delete('all-the-things'), 200)
-    check('bad auth',              put('foo-bar', '[]', auth=False), 403)
-    check('check empty contents',  list(), 200, '[]')
+    check('bad auth on put',       put('foo-bar', '[]', auth=False), 403)
+    check('bad auth on get',       put('foo-bar', '[]', auth=False), 403)
+    check('bad auth on list',      put('foo-bar', '[]', auth=False), 403)
+    check('check empty list',      list(), 200, '[]')
     check('missing court',         get('de305d54-75b4-431b-adb2-eb6b9e546013'), 404)
     check('create a court',        put('de305d54-75b4-431b-adb2-eb6b9e546013', sample_court_json_1), 201)
     check('bad json payload',      put('de305d54-75b4-431b-adb2-eb6b9e546013', 'bad json'), 400)
     check('update a court',        put('de305d54-75b4-431b-adb2-eb6b9e546013', sample_court_json_1), 200)
-    check('check court list',      list(), 200, '['+sample_court_json_1+']')
+    check('check only one court',  list(), 200, '['+sample_court_json_1+']')
     check('check single court',    get('de305d54-75b4-431b-adb2-eb6b9e546013'), 200, sample_court_json_1)
     check('delete court',          delete('de305d54-75b4-431b-adb2-eb6b9e546013'), 200)
-    check('check empty list',      list(), 200, '[]')
-    check('create court 2',        put('de305d54-75b4-431b-eb6b9e546013', sample_court_json_1), 201)
+    check('check empty list 2',    list(), 200, '[]')
+    check('create court 2',        put('de305d54-75b4-431b-adb2-eb6b9e546014', sample_court_json_1), 201)
+    check('create a court',        put('de305d54-75b4-431b-adb2-eb6b9e546015', sample_court_json_1), 201)
+    check('check two courts',      list(), 200, '['+sample_court_json_1+','+sample_court_json_1+']')
+    check('bad uuid',              put('bad-uuid', sample_court_json_1), 400)
     check('clean up',              delete('all-the-things'), 200)
     print "done: %d errors" % num_errors
