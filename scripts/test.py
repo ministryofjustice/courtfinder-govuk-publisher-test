@@ -34,13 +34,6 @@ def check(response, status_code, body=None, win='.'):
     else:
         sys.stdout.write(win)
 
-
-def get(uuid, auth=True):
-    return http('GET', uuid, auth)
-
-def put(uuid, json, auth=True):
-    return http('PUT', uuid, auth, json)
-
 def http(method='GET', uuid='', auth=False, body=None):
     opener = urllib2.build_opener(urllib2.HTTPHandler)
     request = urllib2.Request(base_url+uuid, data=body)
@@ -53,10 +46,14 @@ def http(method='GET', uuid='', auth=False, body=None):
         response = e
     return {'status_code': response.getcode(), 'text': response.read()};
 
+def get(uuid, auth=True):
+    return http('GET', uuid, auth)
+
+def put(uuid, json, auth=True):
+    return http('PUT', uuid, auth, json)
 
 def list(auth=True):
     return http('GET', '', auth)
-
 
 def delete(uuid, auth=True):
     return http('DELETE', uuid, auth)
