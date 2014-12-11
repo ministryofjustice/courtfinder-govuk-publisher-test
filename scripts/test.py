@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-import requests
 import json
 import sys
+import urllib2
 
 base_url='http://127.0.0.1:8000/court/'
 oauth_token='foobar'
@@ -21,37 +21,47 @@ def same_arrays(a,b):
     else:
         return True
 
-def check(request, status_code, body=None, win='.'):
-    if request.status_code != status_code:
-        print "Different status codes: expected %d, got %d" % (status_code, request.status_code)
-        print request.text
+def check(response, status_code, body=None, win='.'):
+    if response['status_code'] != status_code:
+        print "Different status codes: expected %d, got %d" % (status_code, response['status_code'])
     elif body:
         b = json.loads(body)
-        r = json.loads(request.text)
+        r = json.loads(response['text'])
         if type(b) == type([]) and not same_arrays(r,b):
-            print "Different arrays: expected %s, got %s" % (body, request.text)
+            print "Different arrays: expected %s, got %s" % (body, response['text'])
         elif r != b:
-            print "Different objects: expected %s, got %s" % (body, request.text)
+            print "Different objects: expected %s, got %s" % (body, response['text'])
         else:
             sys.stdout.write(win)
     else:
         sys.stdout.write(win)
 
 
-def list():
-    return requests.get(base_url, headers=headers)
-
-def get(uuid):
-    return requests.get(base_url+uuid, headers=headers)
+def get(uuid, auth=True):
+    return http('GET', uuid, auth)
 
 def put(uuid, json, auth=True):
-    if auth:
-        return requests.put(base_url+uuid, headers=headers, data=json)
-    else:
-        return requests.put(base_url+uuid, data=json)
+    return http('PUT', uuid, auth, json)
 
-def delete(uuid):
-    return requests.delete(base_url+uuid, headers=headers)
+def http(method='GET', uuid='', auth=False, body=None):
+    opener = urllib2.build_opener(urllib2.HTTPHandler)
+    request = urllib2.Request(base_url+uuid, data=body)
+    request.get_method = lambda: method
+    if auth:
+        request.add_header('Authorization', 'Bearer ' + oauth_token)
+    try:
+        response = opener.open(request)
+    except urllib2.HTTPError as e:
+        response = e
+    return {'status_code': response.getcode(), 'text': response.read()};
+
+
+def list(auth=True):
+    return http('GET', '', auth)
+
+
+def delete(uuid, auth=True):
+    return http('DELETE', uuid, auth)
 
 
 if __name__ == "__main__":
@@ -60,6 +70,7 @@ if __name__ == "__main__":
     check(list(), 200, '[]')
     check(get('22984u-3482u49u'), 404)
     check(put('22984u-3482u49u', sample_court_json_1), 201)
+    check(put('22984u-3482u49u', 'bad json'), 400)
     check(put('22984u-3482u49u', sample_court_json_1), 200)
     check(list(), 200, '['+sample_court_json_1+']')
     check(get('22984u-3482u49u'), 200, sample_court_json_1)
