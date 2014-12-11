@@ -5,12 +5,16 @@ from django.conf import settings
 from court.models import Court
 from django.http import HttpResponse
 import json
+import re
 
 def __failed_auth(request):
     return not hasattr(settings, 'OAUTH_TOKEN') or (request.META.get('HTTP_AUTHORIZATION','') != 'Bearer ' + settings.OAUTH_TOKEN)
 
 def __to_obj(court):
     return {'name':court.name, 'slug':court.slug, 'number':court.number, 'updated_at':court.updated_at, 'closed': court.closed, 'alert': court.alert, 'lat':court.lat, 'lon':court.lon, 'DX':court.dx}
+
+def __valid_uuid(uuid):
+    return re.match('\A[a-f\d]{8}-[a-f\d]{4}-[1-5][a-f\d]{3}-[89ab][a-f\d]{3}-[a-f\d]{12}\Z',uuid) or uuid == 'all-the-things'
 
 def list(request):
     if __failed_auth(request):
@@ -22,6 +26,8 @@ def list(request):
 def court(request, uuid):
     if __failed_auth(request):
         return HttpResponseForbidden()
+    if not __valid_uuid(uuid):
+        return HttpResponse("invalid uuid", status=400)
     if request.method == "GET":
         court = get_object_or_404(Court,uuid=uuid)
         court_obj = __to_obj(court)
