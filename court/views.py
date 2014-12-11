@@ -28,11 +28,13 @@ def court(request, uuid):
         return HttpResponse(json.dumps(court_obj))
 
     elif request.method == "PUT":
-        c = json.loads(request.body);
+        print request.body
+        try:
+            c = json.loads(request.body);
+        except ValueError:
+            return HttpResponse("invalid JSON payload", status=400)
         court = Court.objects.filter(uuid=uuid)
-        print len(court)
         if len(court) != 0:
-            print "update"
             # update existing court
             court.name=c['name']
             court.slug=c['slug']
@@ -45,7 +47,6 @@ def court(request, uuid):
             court.dx=c['DX']
             return HttpResponse(status=200)
         else:
-            print "create"
             court = Court.objects.create(
               uuid=uuid,
               name=c['name'],
