@@ -7,6 +7,7 @@ import urllib2
 base_url='http://127.0.0.1:8000/court/'
 oauth_token='foobar'
 num_errors=0
+put_tmpl='{"public_url":"https://www.gov.uk/prefix/%s"}'
 
 #with open('../data/sample_court.json') as f:
 #    sample_court_json = f.read()
@@ -84,5 +85,7 @@ if __name__ == "__main__":
     check('create a court',        put('de305d54-75b4-431b-adb2-eb6b9e546015', sample_court_json_1), 201)
     check('check two courts',      list(), 200, '['+sample_court_json_1+','+sample_court_json_1+']')
     check('bad uuid',              put('bad-uuid', sample_court_json_1), 400)
+    check('check PUT response',    put('de305d54-75b4-431b-adb2-eb6b9e546013', sample_court_json_1),
+                                   201, put_tmpl % 'blah')
     check('clean up',              delete('all-the-things'), 200)
     print "done: %d errors" % num_errors

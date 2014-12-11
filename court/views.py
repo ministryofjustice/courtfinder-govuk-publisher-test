@@ -51,7 +51,7 @@ def court(request, uuid):
             court.lon=c['lon']
             court.number=c['number']
             court.dx=c['DX']
-            return HttpResponse(status=200)
+            return HttpResponse('{"public_url":"https://www.gov.uk/prefix/%s"}' % court.slug, status=200)
         else:
             court = Court.objects.create(
               uuid=uuid,
@@ -65,7 +65,7 @@ def court(request, uuid):
               number=c['number'],
               dx=c['DX']
             )
-            return HttpResponse(status=201)
+            return HttpResponse('{"public_url":"https://www.gov.uk/prefix/%s"}' % court.slug, status=201)
     elif request.method == "DELETE":
         if uuid == 'all-the-things':
             Court.objects.all().delete()
