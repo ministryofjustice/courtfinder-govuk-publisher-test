@@ -12,8 +12,6 @@ oauth_token='foobar'
 
 sample_court_json_1 = '{"name":"blah","slug":"blah","updated_at": "2014-03-18T12:33:12.176Z","closed":false,"alert":"","lat":0.0,"lon":0.0,"number":"200","DX":"2039D"}'
 
-headers = {'Authorization': 'Bearer '+oauth_token}
-
 def same_arrays(a,b):
     for i,item in enumerate(a):
         if b[i] and b[i] != item:
