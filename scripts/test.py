@@ -77,4 +77,5 @@ if __name__ == "__main__":
     check(list(), 200, '['+sample_court_json_1+']')
     check(delete('22984u-3482u49u'), 200)
     check(list(), 200, '[]')
+    check(delete('all-the-things'), 200)
     print "done"
