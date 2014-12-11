@@ -85,7 +85,6 @@ if __name__ == "__main__":
     check('create a court',        put('de305d54-75b4-431b-adb2-eb6b9e546015', sample_court_json_1), 201)
     check('check two courts',      list(), 200, '['+sample_court_json_1+','+sample_court_json_1+']')
     check('bad uuid',              put('bad-uuid', sample_court_json_1), 400)
-    check('check PUT response',    put('de305d54-75b4-431b-adb2-eb6b9e546013', sample_court_json_1),
-                                   201, put_tmpl % 'blah')
+    check('check PUT response',    put('de305d54-75b4-431b-adb2-eb6b9e546013', sample_court_json_1), 201, put_tmpl % 'blah')
     check('clean up',              delete('all-the-things'), 200)
     print "done: %d errors" % num_errors
