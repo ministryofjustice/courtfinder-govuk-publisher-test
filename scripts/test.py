@@ -6,12 +6,12 @@ import urllib2
 base_url='http://127.0.0.1:8000/court/'
 oauth_token='foobar'
 num_errors=0
-put_tmpl='{"public_url":"https://www.gov.uk/prefix/%s"}'
+put_tmpl='{"public_url":"http://127.0.0.1:8000/court/public/%s"}'
 
 #with open('../data/sample_court.json') as f:
 #    sample_court_json = f.read()
 
-sample_court_json_1 = '{"name":"blah","slug":"blah","updated_at": "2014-03-18T12:33:12.176Z","closed":false,"alert":"","lat":0.0,"lon":0.0,"number":"200","DX":"2039D"}'
+sample_court_json_1 = '{"name":"London Court","slug":"blah","updated_at": "2014-03-18T12:33:12.176Z","closed":false,"alert":"","lat":0.0,"lon":0.0,"number":"200","DX":"2039D"}'
 sample_court = json.loads(sample_court_json_1)
 
 def same_arrays(a,b):
@@ -42,7 +42,7 @@ def check(description, response, status_code, body=None):
     else:
         print("OK")
 
-def check_put(description, uuid, court_json, expected_status_code, expected_slug):
+def check_put(description, uuid, court_json, expected_status_code, expected_slug=None):
     res = put(uuid, court_json)
     print(description+"... "),
     if res['status_code'] == expected_status_code:
@@ -59,11 +59,16 @@ def check_put(description, uuid, court_json, expected_status_code, expected_slug
     else:
         fail("Different status codes: expected %d, got %d" % (expected_status_code, res['status_code']))
 
+def check_published(description, slug, name):
+    print(description),
+    if name in http(get_url='http://127.0.0.1:8000/court/public/'+slug)['text']:
+        print("OK")
+    else:
+        print("Error. Court was not correctly published")
 
 def http(method='GET', uuid='', auth=False, body=None, get_url=None):
 
     url = get_url if get_url else base_url+uuid
-
     opener = urllib2.build_opener(urllib2.HTTPHandler)
     request = urllib2.Request(url, data=body)
     request.get_method = lambda: method
@@ -109,21 +114,21 @@ if __name__ == "__main__":
     check_put('bad json payload',
               'de305d54-75b4-431b-adb2-eb6b9e546013', 'this is not json', 400, sample_court['slug'])
 
-
     check_put('update a court',
               'de305d54-75b4-431b-adb2-eb6b9e546013', sample_court_json_1, 200, sample_court['slug'])
 
-#    res = put('de305d54-75b4-431b-adb2-eb6b9e546013', sample_court_json_1)
-#    print json.loads(res['body'])['public_url']
-#    http(get_url=res['public_url'])
+    check_published('check if court correctly published', sample_court['slug'], sample_court['name'])
 
-#    check('check single court',    get('de305d54-75b4-431b-adb2-eb6b9e546013'), 200, sample_court_json_1)
-#    check('delete court',          delete('de305d54-75b4-431b-adb2-eb6b9e546013'), 200)
-#
-#    check('create court 2',        put('de305d54-75b4-431b-adb2-eb6b9e546014', sample_court_json_1), 201)
-#    check('create a court',        put('de305d54-75b4-431b-adb2-eb6b9e546015', sample_court_json_1), 201)
-#
-#    check('bad uuid',              put('bad-uuid', sample_court_json_1), 400)
-#    check('check PUT response',    put('de305d54-75b4-431b-adb2-eb6b9e546013', sample_court_json_1), 201, put_tmpl % 'blah')
-#    check('clean up',              delete('all-the-things'), 200)
+    check('delete a court',
+          delete('de305d54-75b4-431b-adb2-eb6b9e546013'), 200)
+
+    check_put('create another court',
+              'de305d54-75b4-431b-adb2-eb6b9e546014', sample_court_json_1, 201, sample_court['slug'])
+
+    check_put('create a court with a bad uuid', 'bad-uuid', sample_court_json_1, 400)
+
+    delete('de305d54-75b4-431b-adb2-eb6b9e546013')
+    delete('de305d54-75b4-431b-adb2-eb6b9e546014')
+    delete('de305d54-75b4-431b-adb2-eb6b9e546015')
+
     print("done: %d errors" % num_errors)
