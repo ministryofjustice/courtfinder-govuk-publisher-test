@@ -2,6 +2,7 @@
 
 import json
 import urllib2
+import os,binascii
 
 base_url='http://127.0.0.1:8000/court/'
 oauth_token='foobar'
@@ -99,36 +100,45 @@ def delete(uuid, auth=True):
     return http('DELETE', uuid, auth)
 
 
-if __name__ == "__main__":
-    # clean up
-    delete('de305d54-75b4-431b-adb2-eb6b9e546013')
-    delete('de305d54-75b4-431b-adb2-eb6b9e546014')
-    delete('de305d54-75b4-431b-adb2-eb6b9e546015')
+def random_uuid():
+    return (binascii.b2a_hex(os.urandom(4)) +
+            "-" +
+            binascii.b2a_hex(os.urandom(2)) +
+            "-1000-8000-" +
+            binascii.b2a_hex(os.urandom(6)))
 
-    check('bad auth on put',       put('foo-bar', '[]', auth=False), 403)
-    check('bad auth on delete',    delete('foo-bar', auth=False), 403)
+if __name__ == "__main__":
+
+    uuid1 = random_uuid()
+    uuid2 = random_uuid()
+
+    print uuid1
+    print uuid2
+
+ #   check('bad auth on put',       put('foo-bar', '[]', auth=False), 403)
+ #   check('bad auth on delete',    delete('foo-bar', auth=False), 403)
 
     check_put('create a court',
-              'de305d54-75b4-431b-adb2-eb6b9e546013', sample_court_json_1, 201, sample_court['slug'])
+              uuid1, sample_court_json_1, 201, sample_court['slug'])
 
     check_put('bad json payload',
-              'de305d54-75b4-431b-adb2-eb6b9e546013', 'this is not json', 400, sample_court['slug'])
+              uuid1, 'this is not json', 400, sample_court['slug'])
 
     check_put('update a court',
-              'de305d54-75b4-431b-adb2-eb6b9e546013', sample_court_json_1, 200, sample_court['slug'])
+              uuid1, sample_court_json_1, 200, sample_court['slug'])
 
     check_published('check if court correctly published', sample_court['slug'], sample_court['name'])
 
-    check('delete a court',
-          delete('de305d54-75b4-431b-adb2-eb6b9e546013'), 200)
+#    check('delete a court',
+#          delete('de305d54-75b4-431b-adb2-eb6b9e546013'), 200)
 
     check_put('create another court',
-              'de305d54-75b4-431b-adb2-eb6b9e546014', sample_court_json_1, 201, sample_court['slug'])
+              uuid2, sample_court_json_1, 201, sample_court['slug'])
 
-    check_put('create a court with a bad uuid', 'bad-uuid', sample_court_json_1, 400)
+    check_put('create a court with a bad uuid',
+              'bad-uuid', sample_court_json_1, 400)
 
-    delete('de305d54-75b4-431b-adb2-eb6b9e546013')
-    delete('de305d54-75b4-431b-adb2-eb6b9e546014')
-    delete('de305d54-75b4-431b-adb2-eb6b9e546015')
+#    delete(uuid1)
+#    delete(uuid2)
 
     print("done: %d errors" % num_errors)
