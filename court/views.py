@@ -14,7 +14,7 @@ def __to_obj(court):
     return {'uuid':court.uuid, 'name':court.name, 'slug':court.slug, 'number':court.number, 'updated_at':court.updated_at, 'closed': court.closed, 'alert': court.alert, 'lat':court.lat, 'lon':court.lon, 'DX':court.dx}
 
 def __valid_uuid(uuid):
-    return re.match('\A[a-f\d]{8}-[a-f\d]{4}-[1-5][a-f\d]{3}-[89ab][a-f\d]{3}-[a-f\d]{12}\Z',uuid) or uuid == 'all-the-things'
+    return re.match('\A[a-f\d]{8}-[a-f\d]{4}-[1-5][a-f\d]{3}-[89ab][a-f\d]{3}-[a-f\d]{12}\Z',uuid)
 
 def list(request):
     if __failed_auth(request):
@@ -70,11 +70,8 @@ def court(request, uuid):
             )
             return HttpResponse('{"public_url":"https://127.0.0.1:8000/court/public/%s"}' % court.slug, status=201)
     elif request.method == "DELETE":
-        if uuid == 'all-the-things':
-            Court.objects.all().delete()
-        else:
-            court = Court.objects.filter(uuid=uuid)
-            court.delete()
+        court = Court.objects.filter(uuid=uuid)
+        court.delete()
         return HttpResponse(status=200)
     else:
         return HttpResponse(status=405)
