@@ -4,5 +4,6 @@ from django.conf.urls import patterns, include, url
 urlpatterns = patterns('',
 
 #    url(r'^admin/', include(admin.site.urls)),
+
     url(r'^court/', include('court.urls', namespace='court'))
 )

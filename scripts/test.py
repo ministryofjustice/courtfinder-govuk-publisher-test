@@ -9,11 +9,15 @@ oauth_token='foobar'
 num_errors=0
 put_tmpl='{"public_url":"http://127.0.0.1:8000/court/public/%s"}'
 
-#with open('../data/sample_court.json') as f:
-#    sample_court_json = f.read()
-
-sample_court_json_1 = '{"name":"London Court","slug":"blah","updated_at": "2014-03-18T12:33:12.176Z","closed":false,"alert":"","lat":0.0,"lon":0.0,"number":"200","DX":"2039D"}'
-sample_court = json.loads(sample_court_json_1)
+with open('../data/sample_court_1.json') as f:
+    sample_court_json_1 = f.read()
+sample_court_1 = json.loads(sample_court_json_1)
+with open('../data/sample_court_2.json') as f:
+    sample_court_json_2 = f.read()
+sample_court_2 = json.loads(sample_court_json_2)
+with open('../data/sample_court_3.json') as f:
+    sample_court_json_3 = f.read()
+sample_court_3 = json.loads(sample_court_json_3)
 
 def same_arrays(a,b):
     for i,item in enumerate(a):
@@ -58,14 +62,15 @@ def check_put(description, uuid, court_json, expected_status_code, expected_slug
         else:
             print("OK")
     else:
-        fail("Different status codes: expected %d, got %d" % (expected_status_code, res['status_code']))
+        fail("Different status codes: expected %d, got %d (%s)" % (expected_status_code, res['status_code'], res['body']))
 
 def check_published(description, slug, name):
     print(description),
-    if name in http(get_url='http://127.0.0.1:8000/court/public/'+slug)['text']:
+    response = http(get_url='http://127.0.0.1:8000/court/public/'+slug)['text']
+    if name in response:
         print("OK")
     else:
-        print("Error. Court was not correctly published")
+        print("Error. Court was not correctly published. Received: "+response)
 
 def http(method='GET', uuid='', auth=False, body=None, get_url=None):
 
@@ -112,33 +117,29 @@ if __name__ == "__main__":
     uuid1 = random_uuid()
     uuid2 = random_uuid()
 
-    print uuid1
-    print uuid2
-
  #   check('bad auth on put',       put('foo-bar', '[]', auth=False), 403)
  #   check('bad auth on delete',    delete('foo-bar', auth=False), 403)
 
     check_put('create a court',
-              uuid1, sample_court_json_1, 201, sample_court['slug'])
+              uuid1, sample_court_json_1, 201, sample_court_1['slug'])
 
     check_put('bad json payload',
-              uuid1, 'this is not json', 400, sample_court['slug'])
+              uuid1, 'this is not json', 400, sample_court_1['slug'])
 
     check_put('update a court',
-              uuid1, sample_court_json_1, 200, sample_court['slug'])
+              uuid1, sample_court_json_1, 200, sample_court_1['slug'])
 
-    check_published('check if court correctly published', sample_court['slug'], sample_court['name'])
-
-#    check('delete a court',
-#          delete('de305d54-75b4-431b-adb2-eb6b9e546013'), 200)
+    check_published('check if court correctly published', sample_court_1['slug'], sample_court_1['name'])
 
     check_put('create another court',
-              uuid2, sample_court_json_1, 201, sample_court['slug'])
+              uuid2, sample_court_json_2, 201, sample_court_2['slug'])
 
     check_put('create a court with a bad uuid',
-              'bad-uuid', sample_court_json_1, 400)
+              'bad-uuid', sample_court_json_3, 400)
 
-#    delete(uuid1)
-#    delete(uuid2)
+    check('delete court 1',
+          delete(uuid1), 200)
+    check('delete court 2',
+          delete(uuid2), 200)
 
     print("done: %d errors" % num_errors)

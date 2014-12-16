@@ -1,17 +1,16 @@
 {
-    "name": "Accrington Magistrates' Court",
-    "slug": "accrington-magistrates-court",
-    "updated_at": "2014-03-18T12:33:12.176Z",
+    "name": "Central Criminal Court",
+    "slug": "central-criminal-court-with-a-different-slug",
+    "updated_at": "2014-03-18T13:33:12.176Z",
     "update_type": "major",
     "locale": "en",
     "closed": false,
-    "alert": "There is an intermittent fault with our telephone number and it is sometimes unavailable.",
-    "lat": "53.7491281247251",
-    "lon": "-2.359323760375266",
-    "court_number": 1725,
+    "lat": 53.7491281247251,
+    "lon": -2.359323760375266,
+    "number": "1723",
     "DX": "730458 Blackburn 10",
     "areas_of_law": [
-        "Crime", "Adoption"
+        "Crime"
     ],
     "facilities": [
         {"type": "guide_dogs", "description": "Guide Dogs are welcome at this court."},
