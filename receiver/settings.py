@@ -114,3 +114,8 @@ STATICFILES_DIRS = (
 OAUTH_TOKEN = os.environ.get('OAUTH_TOKEN', '')
 if not OAUTH_TOKEN:
     print "Warning: no OAUTH_TOKEN defined"
+
+PUBLIC_COURT_PAGES_BASE_URL = os.environ.get('PUBLIC_COURT_PAGES_BASE_URL', '')
+if not PUBLIC_COURT_PAGES_BASE_URL:
+    PUBLIC_COURT_PAGES_BASE_URL = 'https://127.0.0.1:8000/court/public/'
+    print "No PUBLIC_COURT_PAGES_BASE_URL defined. Using: "+PUBLIC_COURT_PAGES_BASE_URL

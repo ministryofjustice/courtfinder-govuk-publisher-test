@@ -75,7 +75,7 @@ def court(request, uuid):
             if hasattr(c, 'DX'):
                 court.DX=c['DX']
 
-            return HttpResponse('{"public_url":"http://127.0.0.1:8000/court/public/%s"}' % court.slug, status=200)
+            return HttpResponse('{"public_url":"%s%s"}' % (settings.PUBLIC_COURT_PAGES_BASE_URL, court.slug), status=200)
         else:
             # create new court
             if len(Court.objects.filter(slug=c['slug'])) != 0:
@@ -99,7 +99,7 @@ def court(request, uuid):
             if hasattr(c, 'DX'):
                 court.DX=c['DX']
             court.save()
-            return HttpResponse('{"public_url":"https://127.0.0.1:8000/court/public/%s"}' % court.slug, status=201)
+            return HttpResponse('{"public_url":"%s%s"}' % (settings.PUBLIC_COURT_PAGES_BASE_URL, court.slug), status=201)
     elif request.method == "DELETE":
         court = Court.objects.filter(uuid=uuid)
         court.delete()
