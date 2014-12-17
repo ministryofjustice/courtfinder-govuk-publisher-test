@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 
+import sys
 import json
 import urllib2
 import os,binascii
 
-base_url='http://127.0.0.1:8000/court/'
 oauth_token='foobar'
 num_errors=0
-put_tmpl='{"public_url":"http://127.0.0.1:8000/court/public/%s"}'
 
 with open('../data/sample_court_1.json') as f:
     sample_court_json_1 = f.read()
@@ -66,7 +65,7 @@ def check_put(description, uuid, court_json, expected_status_code, expected_slug
 
 def check_published(description, slug, name):
     print(description),
-    response = http(get_url='http://127.0.0.1:8000/court/public/'+slug)['text']
+    response = http(get_url=base_url+'courts/'+slug)['text']
     if name in response:
         print("OK")
     else:
@@ -74,10 +73,12 @@ def check_published(description, slug, name):
 
 def http(method='GET', uuid='', auth=False, body=None, get_url=None):
 
-    url = get_url if get_url else base_url+uuid
+    url = get_url if get_url else base_url+'courts/'+uuid
     opener = urllib2.build_opener(urllib2.HTTPHandler)
     request = urllib2.Request(url, data=body)
     request.get_method = lambda: method
+    request.add_header('Content-type', 'application/json')
+    request.add_header('Accept', 'application/json')
     if auth:
         request.add_header('Authorization', 'Bearer ' + oauth_token)
     try:
@@ -113,6 +114,13 @@ def random_uuid():
             binascii.b2a_hex(os.urandom(6)))
 
 if __name__ == "__main__":
+    global base_url
+    if len(sys.argv) != 2:
+        print "usage: %s <api_endpoint_url>" % sys.argv[0]
+        print "For example, https://safe-garden-8494.herokuapp.com/"
+        sys.exit(-1)
+    else:
+        base_url = sys.argv[1]
 
     uuid1 = random_uuid()
     uuid2 = random_uuid()
