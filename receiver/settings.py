@@ -9,11 +9,10 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 """
 
 import sys
+import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
@@ -114,8 +113,3 @@ STATICFILES_DIRS = (
 OAUTH_TOKEN = os.environ.get('OAUTH_TOKEN', '')
 if not OAUTH_TOKEN:
     print "Warning: no OAUTH_TOKEN defined"
-
-PUBLIC_COURT_PAGES_BASE_URL = os.environ.get('PUBLIC_COURT_PAGES_BASE_URL', '')
-if not PUBLIC_COURT_PAGES_BASE_URL:
-    PUBLIC_COURT_PAGES_BASE_URL = 'http://127.0.0.1:8000/courts/public/'
-    print "No PUBLIC_COURT_PAGES_BASE_URL defined. Using: "+PUBLIC_COURT_PAGES_BASE_URL

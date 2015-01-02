@@ -107,6 +107,10 @@ def delete(uuid, auth=True):
     return http('DELETE', uuid, auth)
 
 
+def api_has_extensions():
+    check = http(get_url=base_url+'courts/exts')
+    return check['status_code']==200
+
 def random_uuid():
     return (binascii.b2a_hex(os.urandom(4)) +
             "-" +
@@ -125,6 +129,14 @@ if __name__ == "__main__":
 
     uuid1 = random_uuid()
     uuid2 = random_uuid()
+
+    exts = api_has_extensions()
+    if exts:
+        print("extensions supported")
+        print("deleting all test courts")
+        http(get_url=base_url+'courts/exts/delete-all')
+    else:
+        print("no support for extensions. That's ok.")
 
  #   check('bad auth on put',       put('foo-bar', '[]', auth=False), 403)
  #   check('bad auth on delete',    delete('foo-bar', auth=False), 403)
@@ -150,5 +162,9 @@ if __name__ == "__main__":
           delete(uuid1), 200)
     check('delete court 2',
           delete(uuid2), 200)
+
+    if exts:
+        print("cleaning up")
+        http(get_url=base_url+'courts/exts/delete-all')
 
     print("done: %d errors" % num_errors)

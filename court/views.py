@@ -75,11 +75,11 @@ def court(request, uuid):
             if hasattr(c, 'DX'):
                 court.DX=c['DX']
 
-            return HttpResponse('{"public_url":"%s%s"}' % (settings.PUBLIC_COURT_PAGES_BASE_URL, court.slug), status=200)
+            response_status = 200
         else:
             # create new court
             if len(Court.objects.filter(slug=c['slug'])) != 0:
-                return HttpResponse('Error: a court with the same slug already exists', status=400)
+                return HttpResponse('Error: a court with slug %s already exists' % c['slug'], status=400)
             court = Court(
               uuid=uuid,
               name=c['name'],
@@ -99,10 +99,21 @@ def court(request, uuid):
             if hasattr(c, 'DX'):
                 court.DX=c['DX']
             court.save()
-            return HttpResponse('{"public_url":"%s%s"}' % (settings.PUBLIC_COURT_PAGES_BASE_URL, court.slug), status=201)
+            response_status = 201
+        public_url = "%s://%s/courts/public/%s" % (request.scheme,
+                                                   request.get_host(),
+                                                   court.slug)
+        return HttpResponse('{"public_url":"%s"}' % public_url, status=response_status)
     elif request.method == "DELETE":
         court = Court.objects.filter(uuid=uuid)
         court.delete()
         return HttpResponse(status=200)
     else:
         return HttpResponse(status=405)
+
+def check_extensions(request):
+    return HttpResponse("extensions supported.")
+
+def ext_delete_all(request):
+    Court.objects.all().delete()
+    return HttpResponse("All courts removed.")
