@@ -54,6 +54,7 @@ def check_put(description, uuid, court_json, expected_status_code, expected_slug
             if res.get('public_url'):
                 if expected_slug in res['public_url']:
                     print("OK")
+                    return res['public_url']
                 else:
                     print("Wrong URL %s. Slug should be %s.", (res['public_url'], expected_slug))
             else:
@@ -63,9 +64,9 @@ def check_put(description, uuid, court_json, expected_status_code, expected_slug
     else:
         fail("Different status codes: expected %d, got %d (%s)" % (expected_status_code, res['status_code'], res['body']))
 
-def check_published(description, slug, name):
+def check_published(description, url, name):
     print(description),
-    response = http(get_url=base_url+'courts/'+slug)['text']
+    response = http(get_url=url)['text']
     if name in response:
         print("OK")
     else:
@@ -116,8 +117,8 @@ def random_uuid():
 if __name__ == "__main__":
     global base_url
     if len(sys.argv) != 2:
-        print "usage: %s <api_endpoint_url>" % sys.argv[0]
-        print "For example, https://safe-garden-8494.herokuapp.com/"
+        print("usage: %s <api_endpoint_url>" % sys.argv[0])
+        print("For example, https://safe-garden-8494.herokuapp.com/")
         sys.exit(-1)
     else:
         base_url = sys.argv[1]
@@ -134,10 +135,10 @@ if __name__ == "__main__":
     check_put('bad json payload',
               uuid1, 'this is not json', 400, sample_court_1['slug'])
 
-    check_put('update a court',
+    public_url = check_put('update a court',
               uuid1, sample_court_json_1, 200, sample_court_1['slug'])
 
-    check_published('check if court correctly published', sample_court_1['slug'], sample_court_1['name'])
+    check_published('check if court correctly published', public_url, sample_court_1['name'])
 
     check_put('create another court',
               uuid2, sample_court_json_2, 201, sample_court_2['slug'])
